@@ -1,0 +1,30 @@
+### 멤버조회
+GET localhost:8080/me?format=csv
+
+### 멤버조회
+GET localhost:8080/me
+Accept: text/csv
+
+### 멤버생성
+POST localhost:8080/members
+Content-Type: application/json
+Accept-Language: ko-KR
+
+{
+  "name" : "유재석",
+  "age" : 50,
+  "role" : "admin",
+  "class" : "A"
+}
+
+### 멤버조회
+GET localhost:8080/members?size=10000
+
+### resttemplate
+POST localhost:8080/send-message
+Content-Type: application/json
+
+{
+  "channel": "B",
+  "text": "Bzzz"
+}
