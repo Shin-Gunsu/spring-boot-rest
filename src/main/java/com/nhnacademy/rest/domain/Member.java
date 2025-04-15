@@ -6,13 +6,16 @@ import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import com.fasterxml.jackson.databind.ser.std.ToStringSerializer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @AllArgsConstructor
-public class Member {
+@NoArgsConstructor
+public class Member  {
+    private String id;
+    private String password;
     private String name;
     private Integer age;
-    @JsonSerialize(using = ToStringSerializer.class)
     private Role role;
     @JsonProperty("class")
     @JsonSerialize(using = ToStringSerializer.class)

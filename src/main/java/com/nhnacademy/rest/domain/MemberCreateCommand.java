@@ -10,6 +10,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class MemberCreateCommand {
+    private String id;
+    private String password;
     private String name;
     private Integer age;
     private Role role;

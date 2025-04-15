@@ -4,8 +4,8 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 
 public enum Role {
-    admin,
-    user;
+    ADMIN,
+    MEMBER;
 
     @JsonCreator
     public static Role fromString(String value) {
@@ -14,6 +14,10 @@ public enum Role {
                 return r;
             }
         }
-        return user;
+        return MEMBER;
+    }
+    @JsonValue
+    public String toJson(){
+        return this.name().toLowerCase();
     }
 }

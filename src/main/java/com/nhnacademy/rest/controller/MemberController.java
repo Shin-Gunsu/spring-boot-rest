@@ -3,47 +3,79 @@ package com.nhnacademy.rest.controller;
 
 import com.nhnacademy.rest.domain.*;
 
+import com.nhnacademy.rest.service.MemberService;
 import com.nhnacademy.rest.service.MessengerSender;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.*;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.client.RestTemplate;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 
 @RestController
 public class MemberController {
+
+    private final MemberService memberService;
+
+    public MemberController(MemberService memberService) {
+        this.memberService = memberService;
+    }
+
     @GetMapping("/me")
     public Member me() {
-        return new Member("name", 1, Role.admin, ClassType.A);
+        return new Member("id","password","name", 1, Role.MEMBER, ClassType.A);
     }
 
     @PostMapping("/me")
     public Member post(@RequestBody MemberCreateCommand command) {
-        return new Member(command.getName(), command.getAge(), command.getRole(), command.getClassType());
+        return new Member(command.getId(),command.getPassword(), command.getName(), command.getAge(), command.getRole(), command.getClassType());
     }
 
+    // 멤버 등록
     @PostMapping("/members")
-    public ResponseEntity addMember(@RequestBody MemberCreateCommand memberCreateCommand,
-                                    Requester requester) {
-        System.out.println(requester);
+    public ResponseEntity addMember(@RequestBody MemberCreateCommand memberCreateCommand) {
+        Member member = memberService.saveMember(memberCreateCommand);
+        return ResponseEntity.ok(member);
+    }
+
+    //멤버 조회
+    @GetMapping("/members/{memberId}")
+    public Member getMember(@PathVariable String memberId) {
+        return memberService.getMember(memberId);
+    }
+
+    //멤버 전체 조회
+    @GetMapping("/members")
+    public List<Member> getMembers(Pageable pageable) {
+        return memberService.getMembers();
+    }
+
+    //멤버 삭제
+    @DeleteMapping("/members/{memberId}")
+    public ResponseEntity deleteMember(@PathVariable String memberId) {
+        memberService.deleteMember(memberId);
         return ResponseEntity.ok().build();
     }
 
-    @GetMapping("/members")
-    public List<Member> getMembers(Pageable pageable) {
-        System.out.println("page" + pageable.getPageNumber());
-        System.out.println("size" + pageable.getPageSize());
-        return Arrays.asList(new Member("신건영", 20, Role.admin, ClassType.A));
-    }
+//    //멤버 수정
+//    @PutMapping("/members/{memberId}")
+//    public Member updateMember(@PathVariable String memberId, @RequestBody MemberCreateCommand memberCreateCommand) {
+//
+//    }
+
+@GetMapping("/redis-test")
+public ResponseEntity<?> testRedis() {
+    Map<String,Object> map = memberService.test();
+    return ResponseEntity.ok(map);
+}
+
 
     @PostMapping("/send-message")
     public void  sendMessage(@RequestBody ChannelRequest channelRequest) {
